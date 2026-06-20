@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Face Attendance – Attendance AI{% endblock %}
+
+{% block content %}
+<section class="capture-layout">
+  <div class="capture-video-card">
+    <h1>Face Recognition Attendance</h1>
+    <p class="muted">
+      Allow camera access, select a course, and click <strong>Mark Attendance</strong>. The system
+      will recognize students and mark them as present.
+    </p>
+
+    <div class="form-row">
+      <select id="courseSelect" class="form-control">
+        <option value="">Select Course</option>
+        {% for course in courses %}
+        <option value="{{ course.id }}">{{ course.code }} – {{ course.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="video-wrapper">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas" class="hidden"></canvas>
+    </div>
+
+    <button id="markAttendanceBtn" class="btn btn-primary" type="button">
+      <i class="fa-solid fa-user-check"></i> Mark Attendance
+    </button>
+
+    <div id="statusText" class="muted mt-2"></div>
+  </div>
+
+  <aside class="capture-sidebar">
+    <div class="card">
+      <h2>Recently Marked</h2>
+      <ul id="markedList" class="marked-list"></ul>
+    </div>
+  </aside>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const btn = document.getElementById("markAttendanceBtn");
+    const courseSelect = document.getElementById("courseSelect");
+    const statusText = document.getElementById("statusText");
+    const markedList = document.getElementById("markedList");
+
+    async function initCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (err) {
+        statusText.textContent = "Unable to access camera: " + err.message;
+      }
+    }
+
+    function captureFrame() {
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      if (!w || !h) return null;
+
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, w, h);
+      return canvas.toDataURL("image/jpeg");
+    }
+
+    async function captureFrames(count = 5, interval = 200) {
+      // grab a small sequence of images from the video feed; this allows the
+      // server to perform a basic liveness check.  We wait ``interval``
+      // milliseconds between grabs so that there is a chance for motion.
+      const frames = [];
+      for (let i = 0; i < count; i++) {
+        const f = captureFrame();
+        if (f) frames.push(f);
+        await new Promise((r) => setTimeout(r, interval));
+      }
+      return frames;
+    }
+
+    async function markAttendance() {
+      const courseId = courseSelect.value;
+      if (!courseId) {
+        statusText.textContent = "Please select a course first.";
+        return;
+      }
+
+      statusText.textContent = "Capturing live frames...";
+      const frames = await captureFrames();
+      if (!frames.length) {
+        statusText.textContent = "Waiting for camera to initialize...";
+        return;
+      }
+
+      btn.disabled = true;
+      statusText.textContent = "Uploading frames and running face recognition...";
+
+      const formData = new FormData();
+      formData.append("course_id", courseId);
+      formData.append("frames", JSON.stringify(frames));
+      formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+
+      const response = await fetch("{% url 'attendance:upload_face_frame' %}", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      btn.disabled = false;
+
+      if (!result.success) {
+        statusText.textContent = result.error || "Error while marking attendance.";
+        return;
+      }
+
+      statusText.textContent = `Marked ${result.marked_students.length} student(s) present.`;
+      markedList.innerHTML = "";
+      result.marked_students.forEach((s) => {
+        const li = document.createElement("li");
+        li.textContent = `${s.roll_number} – ${s.name}`;
+        markedList.appendChild(li);
+      });
+    }
+
+    btn.addEventListener("click", markAttendance);
+    initCamera();
+  })();
+</script>
+{% endblock %}
+

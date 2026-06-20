@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Subject Attendance – {{ course.code }}{% endblock %}
+
+{% block content %}
+<section class="content">
+  <header class="content-header">
+    <div>
+      <h1>Subject Attendance – {{ course.code }}</h1>
+      <p class="muted">
+        {{ course.name }} · {{ session.date }}
+      </p>
+    </div>
+  </header>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Roll No</th>
+            <th>Student</th>
+            <th>Present</th>
+            <th>Absent</th>
+            <th>Leave</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          {% with record=existing_records|get_item:student.id %}
+          {% if record %}
+          {% with current=record.status %}
+          {% else %}
+          {% with current="PRESENT" %}
+          {% endif %}
+          <tr>
+            <td>{{ student.roll_number }}</td>
+            <td>{{ student.user.get_full_name|default:student.user.username }}</td>
+            <td>
+              <input
+                type="radio"
+                name="status_{{ student.id }}"
+                value="PRESENT"
+                {% if current == "PRESENT" %}checked{% endif %}
+              />
+            </td>
+            <td>
+              <input
+                type="radio"
+                name="status_{{ student.id }}"
+                value="ABSENT"
+                {% if current == "ABSENT" %}checked{% endif %}
+              />
+            </td>
+            <td>
+              <input
+                type="radio"
+                name="status_{{ student.id }}"
+                value="LEAVE"
+                {% if current == "LEAVE" %}checked{% endif %}
+              />
+            </td>
+          </tr>
+          {% endwith %}
+          {% endwith %}
+          {% empty %}
+          <tr>
+            <td colspan="5" class="muted">No students defined yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <button class="btn btn-primary" type="submit" style="margin-top: 1rem">
+        Save Attendance
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+

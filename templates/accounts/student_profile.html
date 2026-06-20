@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile – Attendance AI{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        {% if profile and profile.photo %}
+        <img src="{{ profile.photo.url }}" alt="Student photo" />
+        {% else %}
+        <span class="avatar-placeholder">{{ request.user.username|first|upper }}</span>
+        {% endif %}
+      </div>
+      <div>
+        <h1>{{ request.user.get_full_name|default:request.user.username }}</h1>
+        {% if profile %}
+        <p>{{ profile.program }} – {{ profile.batch }}</p>
+        <p>Roll No: {{ profile.roll_number }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="profile-body">
+      <p>Use the dashboard to view your daily attendance and reports.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance AI – Smart Attendance{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <h1>Better Attendance For Educators</h1>
+    <p>
+      Streamline your attendance-taking process using AI-powered face recognition and gain
+      real-time visibility into your classrooms.
+    </p>
+    <div class="hero-actions">
+      <a href="{% url 'attendance:dashboard' %}" class="btn btn-primary">Get Started</a>
+      {% if not user.is_authenticated %}
+      <a href="{% url 'accounts:signup' %}" class="btn btn-outline">Student Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-illustration">
+    <div class="hero-card">
+      <h2>AI Attendance</h2>
+      <p>Track presence, absences, and leaves with a single click.</p>
+      <ul>
+        <li><i class="fa-solid fa-face-smile"></i> Face recognition based marking</li>
+        <li><i class="fa-solid fa-chart-line"></i> Smart analytics dashboard</li>
+        <li><i class="fa-solid fa-cloud-arrow-up"></i> Cloud-ready architecture</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="features-grid">
+  <div class="feature-card">
+    <div class="feature-icon">
+      <i class="fa-solid fa-user-check"></i>
+    </div>
+    <h3>Face Recognition Attendance</h3>
+    <p>Mark presence in seconds using a live webcam feed and trained face models.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon feature-icon-green">
+      <i class="fa-solid fa-gauge-high"></i>
+    </div>
+    <h3>Advanced Admin Dashboard</h3>
+    <p>Monitor classes, students, and real-time statistics with modern cards and charts.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon feature-icon-yellow">
+      <i class="fa-solid fa-file-circle-check"></i>
+    </div>
+    <h3>Powerful Reports</h3>
+    <p>Drill into per-course and per-student attendance with filters and exports-ready views.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon feature-icon-purple">
+      <i class="fa-solid fa-user-graduate"></i>
+    </div>
+    <h3>Student Self-Service</h3>
+    <p>Students sign in to view their personal attendance history and profile information.</p>
+  </div>
+</section>
+
+<section class="how-it-works">
+  <h2>How Attendance AI Works</h2>
+  <div class="steps">
+    <div class="step">
+      <span class="step-number">1</span>
+      <h3>Register Students</h3>
+      <p>Create student profiles and capture a small set of face samples per student.</p>
+    </div>
+    <div class="step">
+      <span class="step-number">2</span>
+      <h3>Train the Model</h3>
+      <p>Run the built-in training command to generate an optimized LBPH face recognizer.</p>
+    </div>
+    <div class="step">
+      <span class="step-number">3</span>
+      <h3>Mark Attendance</h3>
+      <p>Use the dashboard camera view to recognize faces and instantly mark attendance.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

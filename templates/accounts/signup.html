@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Student Sign Up – Attendance AI{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Student Sign Up</h1>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {{ form.username.errors }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.email.id_for_label }}">Email</label>
+          {{ form.email }}
+          {{ form.email.errors }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="{{ form.password1.id_for_label }}">Password</label>
+          {{ form.password1 }}
+          {{ form.password1.errors }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+          {{ form.password2 }}
+          {{ form.password2.errors }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="{{ form.roll_number.id_for_label }}">Roll Number</label>
+          {{ form.roll_number }}
+          {{ form.roll_number.errors }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.program.id_for_label }}">Program</label>
+          {{ form.program }}
+          {{ form.program.errors }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="{{ form.batch.id_for_label }}">Batch</label>
+          {{ form.batch }}
+          {{ form.batch.errors }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.section.id_for_label }}">Section</label>
+          {{ form.section }}
+          {{ form.section.errors }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.photo.id_for_label }}">Profile Photo</label>
+        {{ form.photo }}
+        {{ form.photo.errors }}
+      </div>
+
+      <button class="btn btn-primary" type="submit">Create Account</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+

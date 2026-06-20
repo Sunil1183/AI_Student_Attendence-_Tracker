@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Reports – Attendance AI{% endblock %}
+
+{% block content %}
+<section class="reports-layout">
+  <header class="content-header">
+    <h1>Attendance Reports</h1>
+  </header>
+
+  <form method="get" class="filters-row">
+    <select name="course" class="form-control">
+      <option value="">All Courses</option>
+      {% for course in courses %}
+      <option value="{{ course.id }}" {% if course.id|stringformat:"s" == selected_course_id %}selected{% endif %}>
+        {{ course.code }} – {{ course.name }}
+      </option>
+      {% endfor %}
+    </select>
+    <input
+      type="date"
+      name="date"
+      value="{{ selected_date }}"
+      class="form-control"
+    />
+    <button class="btn btn-primary" type="submit">
+      <i class="fa-solid fa-filter"></i> Apply
+    </button>
+  </form>
+
+  <div class="card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Course</th>
+          <th>Roll No</th>
+          <th>Student</th>
+          <th>Status</th>
+          <th>Marked At</th>
+          <th>Via</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+        <tr>
+          <td>{{ record.session.date }}</td>
+          <td>{{ record.session.course.code }}</td>
+          <td>{{ record.student.roll_number }}</td>
+          <td>{{ record.student.user.get_full_name|default:record.student.user.username }}</td>
+          <td>{{ record.get_status_display }}</td>
+          <td>{{ record.marked_at|date:"Y-m-d H:i" }}</td>
+          <td>
+            {% if record.via_face_recognition %}
+            <span class="badge badge-success">Face</span>
+            {% else %}
+            <span class="badge badge-muted">Manual</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="muted">No records for the selected filters.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
