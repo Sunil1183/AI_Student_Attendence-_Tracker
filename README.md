@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Attendance AI – Face Recognition Attendance System
 
 Advanced Django-based attendance system using OpenCV-powered face recognition, designed as a production-style MCA project.
@@ -71,3 +72,6 @@ Then open `http://127.0.0.1:8000/` in your browser.
 
 Detailed implementation is inside the `attendance` app (views, services, and management commands).
 
+=======
+# AI_Student_Attendence-_Tracker
+>>>>>>> 9f47dfa471c214212a63837769523f147f225afa
